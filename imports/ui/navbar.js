@@ -1,8 +1,8 @@
 export default [
   {
-    title: "Dashboard",
-    route: { name: "Dashboard" },
-    icon: "fa-solid fa-gauge",
+    title: 'Dashboard',
+    route: { name: 'Dashboard' },
+    icon: 'fa-solid fa-gauge',
   },
   
   // {
@@ -82,12 +82,19 @@ export default [
       //   // roles: ['admin'],
       // },
       {
-        title: "User",
-        route: { name: "AdminSetting", params: { activeCom: "user" } },
-        group: "admin",
-        icon: "fa-solid fa-users",
+        title: 'Employee',
+        route: { name: 'AdminSetting', params: { activeCom: 'employee' } },
+        group: 'admin',
+        icon: 'fa-solid fa-users',
+        // roles: ['admin'],
+      },
+      {
+        title: 'User',
+        route: { name: 'AdminSetting', params: { activeCom: 'user' } },
+        group: 'admin',
+        icon: 'fa-solid fa-users',
         // roles: ['admin'],
       },
     ],
   },
-];
+]

@@ -28,7 +28,7 @@ export const findUsers = new ValidatedMethod({
       selector = selector || {}
       options = options || {}
 
-      let users = Meteor.users.aggregate([
+      const users = Meteor.users.aggregate([
         { $match: selector },
         {
           $lookup: {
@@ -39,21 +39,26 @@ export const findUsers = new ValidatedMethod({
           },
         },
         { $unwind: { path: '$branchDoc', preserveNullAndEmptyArrays: true } },
-        {
-          $lookup: {
-            from: 'app_roleGroups',
-            localField: 'profile.roleGroup',
-            foreignField: '_id',
-            as: 'groupDoc',
-          },
-        },
-        { $unwind: { path: '$groupDoc', preserveNullAndEmptyArrays: true } },
+        // {
+        //   $lookup: {
+        //     from: 'app_roleGroups',
+        //     localField: 'profile.roleGroup',
+        //     foreignField: '_id',
+        //     as: 'groupDoc',
+        //   },
+        // },
+        // { $unwind: { path: '$groupDoc', preserveNullAndEmptyArrays: true } },
         {
           $group: {
             _id: '$_id',
             username: { $last: '$username' },
             emails: { $last: '$emails' },
             profile: { $last: '$profile' },
+            allowedBranches: {
+              $push: {
+                name: '$branchDoc.name',
+              },
+            },
           },
         },
       ])
@@ -101,6 +106,7 @@ export const insertUser = new ValidatedMethod({
         profile: {
           fullName: user.fullName,
           status: user.status,
+          allowedBranches: user.allowedBranches,
         },
       })
 
@@ -127,13 +133,14 @@ export const updateUser = new ValidatedMethod({
             profile: {
               fullName: user.fullName,
               status: user.status,
+              allowedBranches: user.allowedBranches,
             },
           },
         }
       )
 
       if (user.password) {
-        Accounts.setPassword(user._id, user.password,)
+        Accounts.setPassword(user._id, user.password)
       }
 
       return 'success'

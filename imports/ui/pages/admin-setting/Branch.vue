@@ -1,158 +1,178 @@
 <template>
-  <q-table
-    v-model:pagination="pagination"
-    bordered
-    flat
-    :rows="data"
-    :columns="columns"
-    :filter="filter"
-    :loading="loading"
-    row-key="_id"
-    @request="onChangePagination"
-  >
-    <template #top>
-      <div class="q-gutter-x-md">
-        <q-btn color="primary" no-caps icon="add" @click.prevent="addNew">
-          Add
-        </q-btn>
-      </div>
-
-      <q-space />
-
-      <q-input
-        v-model="filter"
-        outlined
-        dense
-        debounce="300"
-        placeholder="Search"
+  <q-card>
+    <q-card-section>
+      <q-table
+        v-model:pagination="pagination"
+        title="User"
+        :rows="dataTable"
+        :columns="columns"
+        row-key="_id"
+        :filter="filter"
       >
-        <template #append>
-          <q-icon name="search" />
-        </template>
-      </q-input>
-    </template>
-    <template #body-cell-name="props">
-      <q-td :props="props">
-        <span @click="edit(props.row)" class="ra-text-link">
-          {{ props.row.name }}
-        </span>
-      </q-td>
-    </template>
-    <template #body-cell-address="props">
-      <q-td :props="props">
-        <span  >
-          {{ props.row.address }}
-        </span>
-      </q-td>
-    </template>
-    <template #body-cell-checkin="props">
-      <q-td :props="props">
-        <span  >
-          {{ props.row.checkIn.toLocaleTimeString() }}
-        </span>
-      </q-td>
-    </template>
-    <template #body-cell-checkout="props">
-      <q-td :props="props">
-        <span >
-          {{ props.row.checkOut.toLocaleTimeString() }}
-        </span>
-      </q-td>
-    </template>
-  </q-table>
+        <template #top>
+          <div class="q-gutter-x-md">
+            <q-btn
+              color="primary"
+              no-caps
+              @click="addNew"
+            >
+              Add New
+            </q-btn>
+          </div>
 
-  <BranchForm
-    :dialog="visibleDialog"
-    :show-id="showId"
-    @closed="handleClosedDialog"
-  />
+          <q-space />
+
+          <q-input
+            v-model="filter"
+            borderless
+            dense
+            debounce="300"
+            placeholder="Search"
+          >
+            <template #append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </template>
+
+        <template #body-cell-name="props">
+          <q-td :props="props">
+            <span
+              class="ra-text-link"
+              @click="edit(props.row)"
+            >
+              {{ props.row.name }}
+            </span>
+          </q-td>
+        </template>
+
+        <template #body-cell-checkIn="props">
+          <q-td :props="props">
+            <span>
+              {{ formatTime(props.row.checkIn) }}
+            </span>
+          </q-td>
+        </template>
+
+        <template #body-cell-checkOut="props">
+          <q-td :props="props">
+            <span>
+              {{ formatTime(props.row.checkOut) }}
+            </span>
+          </q-td>
+        </template>
+      </q-table>
+    </q-card-section>
+
+    <!-- Component -->
+    <Component
+      :is="currentModal"
+      v-model="visibleModal"
+      :show-id="showId"
+      @closed="handleModelClose"
+    />
+  </q-card>
 </template>
 <script setup>
-import { onMounted, ref } from 'vue'
-import Notify from '/imports/ui/lib/notify'
-// import CustomerForm from './CustomerForm.vue'
-import BranchForm from './BranchForm.vue'
-// import BranchFormVue from './BranchForm.vue'
+import { ref, defineAsyncComponent, nextTick, onMounted, shallowRef } from 'vue'
+import moment from 'moment'
+import Notify from '../../lib/notify.js'
+const BranchForm = shallowRef(
+  defineAsyncComponent(() => import('./BranchForm.vue'))
+)
 
-const columns = [
-  {
-    name: 'name',
-    label: 'Name',
-    align: 'left',
-    field: 'name',
-  },
- 
-  { name: 'address', label: 'Address', field: 'address' },
-  { name: 'checkin', label: 'Check In', field: 'checkin' },
-  { name: 'checkout', label: 'Check Out', field: 'checkout' },
-]
-const visibleDialog = ref(false)
-const loading = ref(false)
-// pagination
+// Composables
+import useMethod from '../../composables/useMethod'
+
+// State
 const pagination = ref({
   sortBy: 'name',
   descending: false,
   page: 1,
   rowsPerPage: 10,
-  rowsNumber: 0,
 })
+
 const filter = ref('')
-const data = ref([])
-const showId = ref('')
+const columns = ref([
+  {
+    name: 'name',
+    label: 'Name',
+    align: 'left',
+    field: 'name',
+    sortable: true,
+  },
+  {
+    name: 'Address',
+    align: 'left',
+    label: 'Address',
+    field: 'address',
+    sortable: true,
+  },
+  {
+    name: 'checkIn',
+    align: 'left',
+    label: 'Check In',
+    field: 'checkIn',
+    sortable: true,
+  },
+  {
+    name: 'checkOut',
+    align: 'left',
+    label: 'Check Out',
+    field: 'checkOut',
+    sortable: true,
+  },
+])
+
+const dataTable = ref([])
+
+// Form
+const currentModal = shallowRef(null)
+const visibleModal = ref(false)
+const showId = ref(null)
+
+const getDataTable = () => {
+  const { call } = useMethod('fetchBranches')
+  call({})
+    .then((result) => {
+      dataTable.value = result
+    })
+    .catch((error) => {
+      Notify.error({ message: error.reason || error })
+      dataTable.value = []
+    })
+}
 
 const addNew = () => {
-  visibleDialog.value = true
-}
-
-// method
-const fetchData = () => {
-  loading.value = true
-  const { page, rowsPerPage } = pagination.value
-  let exp = new RegExp(filter.value)
-  const query = {}
-  if (filter.value) {
-    query['$or'] = [
-      { name: { $regex: exp, $options: 'i' } },
-      { telephone: { $regex: exp, $options: 'i' } },
-      { address: { $regex: exp, $options: 'i' } },
-    ]
-  }
-  const match = {
-    page,
-    rowsPerPage,
-    selector: query,
-  }
-  Meteor.call('findBranch', { ...match }, (err, res) => {
-    if (err) {
-      console.log('error', err)
-      Notify.error({ message: err.reason || err })
-    } else {
-      // this.list = res
-      data.value = res.data || []
-      pagination.value.rowsNumber = res.total || 0
-    }
-
-    loading.value = false
+  visibleModal.value = true
+  nextTick(() => {
+    currentModal.value = BranchForm.value
   })
-}
-const onChangePagination = (val) => {
-  pagination.value = val.pagination
-  fetchData()
 }
 
 const edit = (row) => {
-  visibleDialog.value = true
   showId.value = row._id
+  visibleModal.value = true
+  nextTick(() => {
+    currentModal.value = BranchForm.value
+  })
 }
 
-const handleClosedDialog = (value) => {
-  visibleDialog.value = value
-  showId.value = ''
-  fetchData()
+const formatTime = (date) => {
+  return moment(date).format('HH:mm A')
 }
 
-// life cycle
+const handleModelClose = () => {
+  visibleModal.value = false
+  nextTick(() => {
+    showId.value = null
+    currentModal.value = null
+
+    getDataTable()
+  })
+}
+
 onMounted(() => {
-  fetchData()
+  getDataTable()
 })
 </script>
