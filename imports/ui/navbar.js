@@ -35,13 +35,14 @@ export default [
       {
         title: "Profile",
         route: { name: "AdminSetting", params: { activeCom: "profile" } },
-        icon: "fa-solid fa-code-branch",
+        icon: 'fa-solid fa-users',
         group: "admin",
       },
       {
         title: "Branch",
         route: { name: "AdminSetting", params: { activeCom: "branch" } },
-        icon: "fa-solid fa-user-circle",
+        icon: 'fa-solid fa-code-branch',
+
         group: "admin",
       },
       // {
