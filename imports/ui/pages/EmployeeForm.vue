@@ -118,6 +118,46 @@
                 <div class="row q-col-gutter-y-sm">
                   <div class="col-12">
                     <validate-field
+                    v-slot="{ value, field, errorMessage }"
+                    v-model="form.checkOut"
+                    name="checkOut"
+                  >
+                    <q-input
+                      :model-value="value"
+                      outlined
+                      dense
+                      label="Check Out *"
+                      type="time"
+                      v-bind="field"
+                      :error="!!errorMessage"
+                      :error-message="errorMessage"
+                    />
+                  </validate-field>
+                  </div>
+                  <div class="col-12">
+                    <validate-field
+                    v-slot="{ value, field, errorMessage }"
+                    v-model="form.checkIn"
+                    name="checkIn"
+                  >
+                    <q-input
+                      :model-value="value"
+                      outlined
+                      dense
+                      label="Check In *"
+                      type="time"
+                      v-bind="field"
+                      :error="!!errorMessage"
+                      :error-message="errorMessage"
+                    />
+                  </validate-field>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-12 col-md-6 col-lg-6">
+                <div class="row q-col-gutter-y-sm">
+                  <div class="col-12">
+                    <validate-field
                       v-slot="{ value, field, errorMessage }"
                       v-model="form.typeId"
                       name="employeeType"
@@ -151,6 +191,7 @@
                   </div>
                 </div>
               </div>
+              
             </div>
           </q-form>
         </validate-form>
@@ -260,6 +301,8 @@ const rules = object({
   telephone: string().required(),
   startDate: string().required(),
   employeeType: string().required(),
+  checkIn: string().required(),
+  checkOut: string().required(),
 
   name: string()
     .min(2)
@@ -378,6 +421,9 @@ watch(()=>
     const doc =emtype.value.find(it=>it._id==value)
     console.log(doc)
     form.value.branchId=doc.branchId
+    
+    form.value.checkIn=doc.checkIn("hh:mm:ss").format("DD-MM-YYYY");
+    form.value.checkOut=doc.checkOut("hh:mm:ss").format("DD-MM-YYYY");
 
   }
   

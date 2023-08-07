@@ -61,7 +61,7 @@
                     <div class="col-12">
                       <validate-field
                         v-slot="{ value, field, errorMessage }"
-                        v-model="form.positionId"
+                        v-model="form.branchId"
                         name="branch"
                       >
                         <q-select
@@ -69,14 +69,14 @@
                           outlined
                           :model-value="value"
                           dense
-                          v-model="form.positionId"
-                          :options="positions"
-                          option-label="position"
+                          v-model="form.branchId"
+                          :options="branchs"
+                          option-label="name"
                           option-value="_id"
                           emit-value
                           map-options
                           clearable
-                          label="Position *"
+                          label="Branch  *"
                           v-bind="field"
                           :error="!!errorMessage"
                           :error-message="errorMessage"
@@ -181,7 +181,7 @@
     name: "",
     status: "",
     branchId: "",
-    positionId:"",
+   
   };
   
   const statusOpts = [
@@ -310,16 +310,16 @@
   );
   
 
-  watch(()=>
-  form.value.positionId,(value)=>{
-    if(!value) return false
-    const doc =positions.value.find(it=>it._id==value)
-    console.log(doc)
-    form.value.branchId=doc.branchId
+//   watch(()=>
+//   form.value.branchId,(value)=>{
+//     if(!value) return false
+//     const doc =branchs.value.find(it=>it._id==value)
+//     console.log(doc)
+//     form.value.branchId=doc.branchId
 
-  }
+//   }
   
-)
+// )
 
 
   watch(

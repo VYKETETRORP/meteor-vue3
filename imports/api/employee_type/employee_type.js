@@ -18,10 +18,7 @@ Schemas.EmployeeType = new SimpleSchema({
     type: String,
     optional: false,
   },
-  positionId: {
-    type: String,
-    optional: false,
-  },
+ 
 });
 //jab branch id pi position
 EmployeeTypes.attachSchema(Schemas.EmployeeType);

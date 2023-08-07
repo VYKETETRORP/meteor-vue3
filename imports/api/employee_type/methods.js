@@ -19,10 +19,7 @@ export const insertEmployee = new ValidatedMethod({
         type: String,
         optional: false,
       },
-      positionId: {
-        type: String,
-        optional: false,
-      },
+     
     }).validator(),
   run(doc) {
     if (!Meteor.isServer) return false;
@@ -48,9 +45,9 @@ Meteor.methods({
         
       {
         $lookup: {
-          from: "position",
+          from: "branchs",
           as: "emtypeDoc",
-          localField: "positionId",
+          localField: "branchId",
           foreignField: "_id",
         },
       },
@@ -62,8 +59,8 @@ Meteor.methods({
           _id:1,
           name: 1,
           status: 1,
-          positioname :"$emtypeDoc.position",
-          // brachname:"$emtypeDoc.branchId"
+          // positioname :"$emtypeDoc.position",
+          brachname:"$emtypeDoc.branchId"
       
         },
       },
@@ -103,10 +100,7 @@ Meteor.methods({
         type: String,
         optional: false,
       },
-      positionId: {
-        type: String,
-        optional: false,
-      },
+     
     }).validate(doc);
 
     if (!Meteor.isServer) return false;
@@ -145,10 +139,7 @@ updateEmployeeType(doc) {
         type: String,
         optional: false,
       },
-      positionId: {
-        type: String,
-        optional: false,
-      },
+     
     
     }).validate(doc);
 
