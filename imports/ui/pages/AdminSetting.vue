@@ -31,6 +31,11 @@ export default {
     ),
     User: defineAsyncComponent(() => import('./admin-setting/User.vue')),
     // Employee: defineAsyncComponent(() => import('./admin-setting/User.vue')),
+    Branch: defineAsyncComponent(()=>import('./admin-setting/Branch.vue')),
+    Department: defineAsyncComponent(()=>import('./admin-setting/Department.vue')),
+    Position : defineAsyncComponent(()=>import('./admin-setting/Position.vue')),
+    EmployeeType: defineAsyncComponent(()=>import('./admin-setting/EmployeeType.vue'))
+    // EmployeeType : defineAsyncComponent(()=>import('./admin-setting/EmployeeType.vue'))
   },
   setup() {
     // Router
@@ -45,6 +50,36 @@ export default {
         icon: 'far fa-user-circle',
         route: { name: 'AdminSetting', params: { activeCom: 'profile' } },
         component: 'UserProfile',
+      },
+      {
+        title: 'Branch',
+        activeName: 'branch',
+        icon: 'far fa-user-circle',
+        route: { name: 'AdminSetting', params: { activeCom: 'branch' } },
+        component: 'Branch',
+      },
+      {
+        title:'Employee',
+        activeName:'employee_type',
+        icon: 'far fa-user-circle',
+        route:{name:'AdminSetting',params:{activeCom:'employee_type'}},
+        component:'EmployeeType'
+
+      },
+
+      {
+        title: 'Position',
+        activeName: 'position',
+        icon: 'far fa-user-circle',
+        route: { name: 'AdminSetting', params: { activeCom: 'position' } },
+        component: 'Position',
+      },
+      {
+        title: 'Department',
+        activeName: 'department',
+        icon: 'far fa-user-circle',
+        route: { name: 'AdminSetting', params: { activeCom: 'department' } },
+        component: 'Department',
       },
       {
         title: 'Employee',

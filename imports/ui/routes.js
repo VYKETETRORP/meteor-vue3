@@ -1,6 +1,9 @@
 import Dashboard from "./pages/Dashboard.vue";
 import Login from "./pages/Login.vue";
-
+//Employee
+import Employee from './pages/Employee.vue'
+//Attendance
+import Attendance from './pages/Attendance.vue'
 // Setting
 import AdimSetting from "./pages/AdminSetting.vue";
 
@@ -11,6 +14,7 @@ import NotFound from "./pages/NotFound.vue";
 import Report from "./reports/index.vue";
 import Sample from "./reports/Sample.vue";
 
+
 export default [
   {
     path: "/",
@@ -19,6 +23,29 @@ export default [
     meta: {
       title: "Dashboard",
     },
+  },
+  {
+    path: "/employee",
+    name: "Employee",
+    component: Employee,
+    meta: {
+      title: "Employee",
+      breadcrumb: {
+        parent: "Dashboard",
+      },
+    },
+  },
+  {
+    path:"/attendance",
+    name:"Attendance",
+    component:Attendance,
+    meta:{
+      title:"Employee",
+      breadcrumb:{
+        parent:"Dashboard"
+      }
+    }
+
   },
   {
     path: "/login",
@@ -63,6 +90,7 @@ export default [
       },
     },
   },
+ 
   {
     path: "/sample",
     name: "Sample",

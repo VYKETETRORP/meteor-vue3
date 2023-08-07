@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import SideBar from './SideBar.vue'
+import SideBar from './Sidebar.vue'
 import Notification from './_Notification.vue'
 import AdminSetting from './_AdminSetting.vue'
 import Breadcrumb from './_Breadcrumb.vue'
+// import SideBar from './Sidebar.vue'
 
 const leftDrawerOpen = ref(false)
 const toggleLeftDrawer = () => {

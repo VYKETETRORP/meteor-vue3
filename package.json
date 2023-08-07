@@ -13,6 +13,7 @@
     "@quasar/extras": "^1.15.11",
     "bcrypt": "^5.1.0",
     "chart.js": "^4.2.1",
+    "dayjs": "^1.11.9",
     "lodash": "^4.17.21",
     "meteor-node-stubs": "^1.2.1",
     "moment": "^2.29.4",
