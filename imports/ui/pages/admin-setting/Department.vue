@@ -48,7 +48,7 @@
       <template #body-cell-name="props">
         <q-td :props="props">
           <span  >
-            {{ props.row.name}}
+            {{ props.row.branchName}}
           </span>
         </q-td>
       </template>
@@ -62,9 +62,15 @@
     />
   </template>
   <script setup>
-  import { onMounted, ref } from 'vue'
+  import { computed, onMounted, ref,watch } from 'vue'
   import Notify from '/imports/ui/lib/notify'
 import DepartmentForm from './DepartmentForm.vue';
+import {useStore} from '/imports/store'
+
+
+const store = useStore()
+
+const currentBranchId=computed(()=>store.getters['app/currentBranchId'])
   const columns = [
     {
       name: 'department',
@@ -100,12 +106,14 @@ import DepartmentForm from './DepartmentForm.vue';
     loading.value = true
     const { page, rowsPerPage } = pagination.value
     let exp = new RegExp(filter.value)
-    const query = {}
+    const query = {
+      branchId : currentBranchId.value
+    }
+
     if (filter.value) {
       query['$or'] = [
         { department: { $regex: exp, $options: 'i' } },
         { status: { $regex: exp, $options: 'i' } },
-        { branchId: { $regex: exp, $options: 'i' } },
       ]
     }
     const match = {
@@ -113,7 +121,8 @@ import DepartmentForm from './DepartmentForm.vue';
       rowsPerPage,
       selector: query,
     }
-    Meteor.call('findDepartment', { ...match }, (err, res) => {
+    console.log('query',query)
+    Meteor.call('findDepartment', match, (err, res) => { 
       if (err) {
         console.log('error', err)
         Notify.error({ message: err.reason || err })
@@ -142,6 +151,10 @@ import DepartmentForm from './DepartmentForm.vue';
     showId.value = ''
     fetchData()
   }
+
+  watch(()=>currentBranchId.value,()=>{
+    fetchData()
+  })
   
   // life cycle
   onMounted(() => {

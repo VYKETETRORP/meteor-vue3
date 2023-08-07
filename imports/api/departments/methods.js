@@ -38,32 +38,30 @@ Meteor.methods({
     selector = selector || {};
     const limit = rowsPerPage === 0 ? Number.MAX_SAFE_INTEGER : rowsPerPage;
     const skip = rowsPerPage * (page - 1);
-
+console.log('selector',selector)
     const data = Departments.aggregate([
-      
+      {
+        $match: selector,
+      },
       {
         $lookup: {
-          from: "branchs",
-          as: "departmentDoc",
+          from: "app_branches",
+          as: "branchDoc",
           localField: "branchId",
           foreignField: "_id",
         },
       },
-      { $unwind: { path: "$departmentDoc" } },
-     
-   
-       {
+      { $unwind: { path: "$branchDoc" } },
+      {
         $project: {
           _id:1,
           department: 1,
           status: 1,
-          name: "$departmentDoc.name",
-      
+          branchId:1,
+          branchName: "$branchDoc.name",
         },
-      },
-      {
-        $match: selector,
-      },
+      },   
+      
       {
         $skip: skip,
       },
@@ -73,7 +71,9 @@ Meteor.methods({
      
     ]);
     const total = Departments.find(selector).count();
+    console.log('data',data)
     return { data, total };
+    
   },
   checkExist2({ selector }) {
     return Departments.findOne(selector);
