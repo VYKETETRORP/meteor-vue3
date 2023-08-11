@@ -45,10 +45,10 @@
           </span>
         </q-td>
       </template>
-      <template #body-cell-position="props">
+      <template #body-cell-branchname="props">
         <q-td :props="props">
           <span  >
-            {{ props.row.positioname}}
+            {{ props.row.branchName}}
           </span>
         </q-td>
       </template>
@@ -62,9 +62,12 @@
     />
   </template>
   <script setup>
-  import { onMounted, ref } from 'vue'
+  import { computed, onMounted, ref, watch } from 'vue'
   import Notify from '/imports/ui/lib/notify'
   import EmployeeTypeForm from './EmployeeTypeForm.vue';
+  import {useStore} from '/imports/store'
+
+  const store = useStore()
   const columns = [
     {
       name: 'name',
@@ -74,9 +77,10 @@
     },
    
     { name: 'status', label: 'Status', field: 'status' },
-    { name: 'position', label: 'Position', field: 'position' },
+    { name: 'branchname', label: 'Branch Name', field: 'branchname' },
     
   ]
+  const currentBranchId=computed(()=>store.getters['app/currentBranchId'])
   const visibleDialog = ref(false)
   const loading = ref(false)
   // pagination
@@ -100,12 +104,13 @@
     loading.value = true
     const { page, rowsPerPage } = pagination.value
     let exp = new RegExp(filter.value)
-    const query = {}
+    const query = {
+      branchId:currentBranchId.value
+    }
     if (filter.value) {
       query['$or'] = [
         { department: { $regex: exp, $options: 'i' } },
         { status: { $regex: exp, $options: 'i' } },
-        { branchId: { $regex: exp, $options: 'i' } },
       ]
     }
     const match = {
@@ -142,7 +147,9 @@
     showId.value = ''
     fetchData()
   }
-  
+  watch(()=>currentBranchId.value,()=>{
+    fetchData()
+  })
   // life cycle
   onMounted(() => {
     fetchData()

@@ -82,13 +82,13 @@ export default [
       //   icon: "fa-solid fa-users",
       //   // roles: ['admin'],
       // },
-      {
-        title: 'Employee',
-        route: { name: 'AdminSetting', params: { activeCom: 'employee' } },
-        group: 'admin',
-        icon: 'fa-solid fa-users',
-        // roles: ['admin'],
-      },
+      // {
+      //   title: 'Employee',
+      //   route: { name: 'AdminSetting', params: { activeCom: 'employee' } },
+      //   group: 'admin',
+      //   icon: 'fa-solid fa-users',
+      //   // roles: ['admin'],
+      // },
       {
         title: 'User',
         route: { name: 'AdminSetting', params: { activeCom: 'user' } },

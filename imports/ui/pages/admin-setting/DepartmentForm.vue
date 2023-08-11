@@ -33,6 +33,12 @@
                       ></q-input>
                     </validate-field>
                   </div>
+              
+                </div>
+              </div>
+              <div class="col-xs-12 col-md-6 col-lg-6">
+                <div class="row q-col-gutter-y-sm">
+                
                   <div class="col-12">
                     <validate-field
                       v-slot="{ value, field }"
@@ -55,7 +61,6 @@
                   </div>
                 </div>
               </div>
-
               
             </div>
           </q-form>
@@ -109,7 +114,7 @@ const emit = defineEmits(["closed"]);
 const currentBranchId= computed(()=>store.getters['app/currentBranchId'])
 const initForm = {
   department: "",
-  status: "",
+  status: "active",
   branchId: "",
 };
 
@@ -184,6 +189,9 @@ const insert = () => {
       console.error("Error inserting department:", error);
     } else {
       console.log("Department inserted successfully!");
+      Notify.success({ message: 'Success' })
+     
+     cancel();
     }
   });
 };

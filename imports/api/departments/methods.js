@@ -58,6 +58,7 @@ console.log('selector',selector)
           department: 1,
           status: 1,
           branchId:1,
+          
           branchName: "$branchDoc.name",
         },
       },   
@@ -110,8 +111,12 @@ console.log('selector',selector)
       throw new Meteor.Error("Insert Department error", error);
     }
   },
-  fetchdepartment(){
-    return Departments.find({}).fetch()
+  // fetchdepartment(){
+  //   return Departments.find({}).fetch()
+
+  // },
+  fetchdepartment(selector){
+    return Departments.find(selector).fetch()
 
   },
   

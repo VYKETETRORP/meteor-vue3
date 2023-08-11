@@ -121,7 +121,6 @@ const currentBranchId=computed(()=>store.getters['app/currentBranchId'])
       rowsPerPage,
       selector: query,
     }
-    console.log('query',query)
     Meteor.call('findDepartment', match, (err, res) => { 
       if (err) {
         console.log('error', err)

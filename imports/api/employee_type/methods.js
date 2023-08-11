@@ -39,19 +39,19 @@ Meteor.methods({
     selector = selector || {};
     const limit = rowsPerPage === 0 ? Number.MAX_SAFE_INTEGER : rowsPerPage;
     const skip = rowsPerPage * (page - 1);
-
+console.log('selector',selector)
     const data = EmployeeTypes.aggregate([
       
         
       {
         $lookup: {
-          from: "branchs",
-          as: "emtypeDoc",
+          from: "app_branches",
+          as: "branchDoc",
           localField: "branchId",
           foreignField: "_id",
         },
       },
-      { $unwind: { path: "$emtypeDoc" } },
+      { $unwind: { path: "$branchDoc" } },
      
    
        {
@@ -59,8 +59,12 @@ Meteor.methods({
           _id:1,
           name: 1,
           status: 1,
+          branchId:1,
           // positioname :"$emtypeDoc.position",
-          brachname:"$emtypeDoc.branchId"
+          checkIn:"$branchDoc.checkIn",
+          checkOut:"$branchDoc.checkOut",
+
+          branchName:"$branchDoc.name"
       
         },
       },
@@ -76,6 +80,7 @@ Meteor.methods({
      
     ]);
     const total = EmployeeTypes.find(selector).count();
+    console.log('DATA',data)
     return { data, total };
   },
   checkExist3({ selector }) {
@@ -116,8 +121,8 @@ Meteor.methods({
   },
 
   
-  fetchEmploye(){
-    return EmployeeTypes.find({}).fetch()
+  fetchEmployeType(selector){
+    return EmployeeTypes.find(selector).fetch()
 
   },
 

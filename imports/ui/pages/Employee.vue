@@ -38,10 +38,10 @@
           </span>
         </q-td>
       </template>
-      <template #body-cell-address="props">
+      <template #body-cell-position="props">
         <q-td :props="props">
           <span  >
-            {{ props.row.address }}
+            {{ props.row.posName }}
           </span>
         </q-td>
       </template>
@@ -59,6 +59,35 @@
           </span>
         </q-td>
       </template>
+      <template #body-cell-telephone="props">
+        <q-td :props="props">
+          <span >
+            {{ props.row.telephone }}
+          </span>
+        </q-td>
+      </template>
+      <template #body-cell-type="props">
+        <q-td :props="props">
+          <span >
+            {{ props.row.typeName }}
+          </span>
+        </q-td>
+      </template>
+
+      <template #body-cell-startDate="props">
+        <q-td :props="props">
+          <span  >
+            {{ props.row.startDate.toLocaleDateString() }}
+          </span>
+        </q-td>
+      </template>
+      <template #body-cell-address="props">
+        <q-td :props="props">
+          <span >
+            {{ props.row.address }}
+          </span>
+        </q-td>
+      </template>
     </q-table>
   
     <EmployeeForm 
@@ -68,12 +97,14 @@
     />
   </template>
   <script setup>
-  import { onMounted, ref } from 'vue'
+  import { computed, onMounted, ref,watch } from 'vue'
   import Notify from '/imports/ui/lib/notify'
   import EmployeeForm from './EmployeeForm.vue';
-  // import CustomerForm from './CustomerForm.vue'
-  // import BranchFormVue from './BranchForm.vue'
+  import {useStore} from '/imports/store'
+
+  const store = useStore()
   
+  const currentBranchId=computed(()=>store.getters['app/currentBranchId'])
   const columns = [
     {
       name: 'name',
@@ -81,8 +112,13 @@
       align: 'left',
       field: 'name',
     },
-   
+    { name: 'type', label: 'Employee Type', field: 'type' },
+    { name: 'position', label: 'Position', field: 'position' },
+
     { name: 'address', label: 'Address', field: 'address' },
+    { name: 'telephone', label: 'Telephone', field: 'telephone' },
+    { name: 'startDate', label: 'Sart Date', field: 'startDate' },
+
     { name: 'checkin', label: 'Check In', field: 'checkin' },
     { name: 'checkout', label: 'Check Out', field: 'checkout' },
   ]
@@ -109,7 +145,9 @@
     loading.value = true
     const { page, rowsPerPage } = pagination.value
     let exp = new RegExp(filter.value)
-    const query = {}
+    const query = {
+      branchId:currentBranchId.value
+        }
     if (filter.value) {
       query['$or'] = [
         { name: { $regex: exp, $options: 'i' } },
@@ -122,7 +160,7 @@
       rowsPerPage,
       selector: query,
     }
-    Meteor.call('findBranch', { ...match }, (err, res) => {
+    Meteor.call('findEmployee', { ...match }, (err, res) => {
       if (err) {
         console.log('error', err)
         Notify.error({ message: err.reason || err })
@@ -141,6 +179,7 @@
   }
   
   const edit = (row) => {
+    
     visibleDialog.value = true
     showId.value = row._id
   }
@@ -155,4 +194,9 @@
   onMounted(() => {
     fetchData()
   })
+  watch(()=>currentBranchId.value,()=>{
+    fetchData()
+  })
+
+  
   </script>

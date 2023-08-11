@@ -6,6 +6,10 @@ Meteor.methods({
   fetchBranches(selector: any) {
     return Branches.find(selector).fetch()
   },
+  fetchBranch(){
+    return Branches.find({}).fetch()
+
+  },
   findOneBranchById({ _id }: { _id: string }) {
     return Branches.findOne({ _id: _id })
   },

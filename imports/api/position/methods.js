@@ -1,6 +1,6 @@
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import SimpleSchema from "simpl-schema";
-import { Position } from "postcss";
+// import { Position } from "postcss";
 import { Positions } from "./position";
 export const insertPosition = new ValidatedMethod({
   name: "insertPosition",
@@ -43,31 +43,34 @@ Meteor.methods({
     selector = selector || {};
     const limit = rowsPerPage === 0 ? Number.MAX_SAFE_INTEGER : rowsPerPage;
     const skip = rowsPerPage * (page - 1);
-
+    console.log('selector',selector)
     const data = Positions.aggregate([
-      {
-      $lookup: {
-        from: "departments",
-        as: "posDoc",
-        localField: "departmentId",
-        foreignField: "_id",
-      },
-    },
-    { $unwind: { path: "$posDoc" } },
-   
- 
-     {
-      $project: {
-        _id:1,
-        position: 1,
-        status: 1,
-        department: "$posDoc.department",
-    
-      }},
-
       {
         $match: selector,
       },
+      {
+        $lookup: {
+          from: "departments",
+          as: "deDoc",
+          localField: "departmentId",
+          foreignField: "_id",
+        },
+      },
+      { $unwind: { path: "$deDoc" } },
+       {
+        $project: {
+          _id:1,
+          position: 1,
+          status: 1,
+         branchId:1,
+          departmentId:1,
+          department: "$deDoc.department",
+          branchName:"$deDoc.name",
+      
+        }},
+      
+
+     
       {
         $skip: skip,
       },
@@ -77,6 +80,7 @@ Meteor.methods({
      
     ]);
     const total = Positions.find(selector).count();
+    console.log('data',data)
     return { data, total };
   },
   checkExistp({ selector }) {
@@ -153,8 +157,8 @@ Meteor.methods({
       throw new Meteor.Error("Update Department error", error);
     }
   },
-  fetchPosition(){
-    return Positions.find({}).fetch()
+  fetchPosition(selector){
+    return Positions.find(selector).fetch()
 
   },
   removePosition({ id }) {

@@ -97,7 +97,6 @@
           </q-form>
         </validate-form>
       </q-card-section>
-
       <q-card-actions align="right" class="bg-white text-teal">
         <div class="text-right q-gutter-sm">
           <q-btn color="primary" @click="submit"> Save </q-btn>
@@ -117,11 +116,14 @@ export default {
 
 <script setup>
 import Notify from "/imports/ui/lib/notify";
-import { ref, watch, reactive, onMounted } from "vue";
+import { ref, watch, reactive, onMounted, computed } from "vue";
 import { useQuasar } from "quasar";
 import { Form as ValidateForm, Field as ValidateField } from "vee-validate";
 import { object, string, number, array, ref as yupRef } from "yup";
+import {useStore} from '/imports/store'
 
+
+const store = useStore()
 const $q = useQuasar();
 const props = defineProps({
   dialog: {
@@ -134,26 +136,16 @@ const props = defineProps({
   },
 });
 
+
+const currentBranchId=computed(()=>store.getters['app/currentBranchId'])
 const emit = defineEmits(["closed"]);
 
 const department = ref([]);
 
-onMounted(() => {
-  fetchDepartment()
-});
-const fetchDepartment  = () => {
-  Meteor.call("fetchdepartment", (err, res) => {
-    if (err) {
-      console.log("fetch department error", err);
-    } else {
-      console.log("Success fetch department", res);
-      department.value = res;
-    }
-  });
-};
+
 const initForm = {
   position: "",
-  status: "",
+  status: "active",
   branchId: "",
   departmentId: "",
 };
@@ -212,6 +204,7 @@ const submit = async () => {
   const { valid } = await refForm.value.validate();
 
   if (valid) {
+    form.value.branchId=currentBranchId.value
     if (form.value._id) {
       update();
     } else {
@@ -219,6 +212,20 @@ const submit = async () => {
     }
   }
 };
+
+const  fetchdepartment=()=>{
+  const selector={
+    branchId:currentBranchId.value
+  }
+    Meteor.call("fetchdepartment",selector, (err, res) => {
+      if (err) {
+        console.log("fetch  fetchdepartment error", err);
+      } else {
+        console.log("Success  fetchdepartment ", res);
+        department.value = res;
+      }
+    });
+  }
 
 const insert = () => {
   Meteor.call("insert1", form.value, (error) => {
@@ -233,7 +240,7 @@ const insert = () => {
 const update = () => {
   Meteor.call("updatePosition", form.value, (err, res) => {
     if (err) {
-      Notify.error({ message: err.reason || err });
+      Notify.error({ message: err.reason  || err });
     } else {
       Notify.success({ message: "Success" });
       cancel();
@@ -275,17 +282,16 @@ const cancel = () => {
   emit("closed", false);
 };
 
+// watch(()=>
+//   form.value.departmentId,(value)=>{
+//     if(!value) return false
+//     const doc =department.value.find(it=>it._id==value)
+//     console.log(doc)
+//     form.value.branchId=doc.branchId
 
-watch(()=>
-  form.value.departmentId,(value)=>{
-    if(!value) return false
-    const doc =department.value.find(it=>it._id==value)
-    console.log(doc)
-    form.value.branchId=doc.branchId
-
-  }
+//   }
   
-)
+// )
 
 
 // watch(form.value., (newId, oldId) => {
@@ -299,7 +305,9 @@ watch(
     visibleDialog.value = value;
   }
 );
-
+watch(()=>currentBranchId.value,()=>{
+  fetchdepartment()
+  })
 watch(
   () => props.showId,
   (value) => {
@@ -310,4 +318,8 @@ watch(
     }
   }
 );
+
+onMounted(()=>{
+  fetchdepartment()
+})
 </script>

@@ -33,6 +33,13 @@
                         ></q-input>
                       </validate-field>
                     </div>
+                 
+                  </div>
+                  
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-6">
+                  <div class="row q-col-gutter-y-sm">
+                  
                     <div class="col-12">
                       <validate-field
                         v-slot="{ value, field }"
@@ -54,45 +61,10 @@
                       </validate-field>
                     </div>
                   </div>
+                  
                 </div>
   
-                <div class="col-xs-12 col-md-6 col-lg-6">
-                  <div class="row q-col-gutter-y-sm">
-                    <div class="col-12">
-                      <validate-field
-                        v-slot="{ value, field, errorMessage }"
-                        v-model="form.branchId"
-                        name="branch"
-                      >
-                        <q-select
-                          class="text-uppercase"
-                          outlined
-                          :model-value="value"
-                          dense
-                          v-model="form.branchId"
-                          :options="branchs"
-                          option-label="name"
-                          option-value="_id"
-                          emit-value
-                          map-options
-                          clearable
-                          label="Branch  *"
-                          v-bind="field"
-                          :error="!!errorMessage"
-                          :error-message="errorMessage"
-                        >
-                          <template v-slot:no-option>
-                            <q-item>
-                              <q-item-section class="text-grey">
-                                No results
-                              </q-item-section>
-                            </q-item>
-                          </template>
-                        </q-select>
-                      </validate-field>
-                    </div>
-                  </div>
-                </div>
+               
               </div>
             </q-form>
           </validate-form>
@@ -118,10 +90,13 @@
   <script setup>
   
   import Notify from "/imports/ui/lib/notify";
-  import { ref, watch, reactive, onMounted } from "vue";
+  import { ref, watch, reactive, onMounted, computed } from "vue";
   import { useQuasar } from "quasar";
   import { Form as ValidateForm, Field as ValidateField } from "vee-validate";
   import { object, string, number, array, ref as yupRef } from "yup";
+  import {useStore} from '/imports/store'
+
+  const store = useStore()
   
   const $q = useQuasar();
   const props = defineProps({
@@ -134,14 +109,15 @@
       default: null,
     },
   });
-  
+  // const currentBranchId=computed(()=>store.getters['/app/currentBranchId'])
+  const currentBranchId= computed(()=>store.getters['app/currentBranchId'])
+
   const emit = defineEmits(["closed"]);
   
-  const branchs = ref([]);
   const positions=ref([])
   const emtype=ref([])
   onMounted(() => {
-    fetchBranch();
+   
     fetchPosition()
     fetchEmploye()
   });
@@ -179,7 +155,7 @@
   };
   const initForm = {
     name: "",
-    status: "",
+    status: "active",
     branchId: "",
    
   };
@@ -195,7 +171,6 @@
   
   const rules = object({
     status: string().required(),
-    branch: string().required(),
   
     name: string()
       .min(2)
@@ -238,6 +213,7 @@
     const { valid } = await refForm.value.validate();
   
     if (valid) {
+      form.value.branchId=currentBranchId.value
       if (form.value._id) {
         update();
       } else {
@@ -252,6 +228,8 @@
         console.error("Error inserting employee type:", error);
       } else {
         console.log("Employee type inserted successfully!");
+          Notify.success({ message: 'Success' })
+     
           cancel();
 
       }
