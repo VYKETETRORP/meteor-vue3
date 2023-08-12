@@ -23,6 +23,7 @@ export default [
     icon:"fa-solid fa-file-circle-check"
 
   },
+ 
 
   //admin-setting
   {
@@ -68,12 +69,12 @@ export default [
         icon: "fa-solid fa-person-circle-exclamation",
         group: "admin",
       },
-      {
-        title: "Leave",
-        route: { name: "AdminSetting", params: { activeCom: "leave" } },
-        icon: "fa-solid fa-arrow-right-from-bracket",
-        group: "admin",
-      },
+      // {
+      //   title: "Leave",
+      //   route: { name: "AdminSetting", params: { activeCom: "leave" } },
+      //   icon: "fa-solid fa-arrow-right-from-bracket",
+      //   group: "admin",
+      // },
       
       // {
       //   title: "Employee",
@@ -97,5 +98,12 @@ export default [
         // roles: ['admin'],
       },
     ],
+  },
+
+  {
+    title: "Leave",
+    route: { name:"Leave"  },
+    icon: "fa-solid fa-arrow-right-from-bracket",
+   
   },
 ]

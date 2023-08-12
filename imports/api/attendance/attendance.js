@@ -6,10 +6,8 @@ export const Attendances = new Mongo.Collection("attendance");
 const Schemas = {};
 
 Schemas.Attendance = new SimpleSchema({
- typeId: {
-    type: String,
-    optional: false,
-  },
+  type: { type: String, optional: true, },
+
   tranDate: {
     type: Date,
     optional: false,

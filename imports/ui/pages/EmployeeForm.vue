@@ -37,57 +37,6 @@
                     </validate-field>
                   </div>
                   <div class="col-12">
-                    <!-- <validate-field
-                      v-slot="{ value, field, errorMessage }"
-                      v-model="form.startDate"
-                      name="startDate"
-                    >
-                      <q-input
-                        readonly
-                        clearable
-                        v-model="form.startDate"
-                        v-bind="field"
-                        :error="!!errorMessage"
-                        :error-message="errorMessage"
-                        :model-value="value"
-                      >
-                        <template v-slot:prepend>
-                          <q-icon
-                            name="event"
-                            class="cursor-pointer"
-                          >
-                            <q-popup-proxy
-                              transition-show="scale"
-                              transition-hide="scale"
-                            >
-                              <q-date
-                                v-model="form.startDate"
-                                mask="YYYY-MM-DD"
-                              ></q-date>
-                            </q-popup-proxy>
-                          </q-icon>
-                        </template>
-
-                        <template v-slot:append>
-                          <q-icon
-                            name="access_time"
-                            class="cursor-pointer"
-                          >
-                            <q-popup-proxy
-                              transition-show="scale"
-                              transition-hide="scale"
-                            >
-                              <q-date
-                                v-model="form.startDate"
-                                mask="YYYY-MM-DD"
-                                format24h
-                              ></q-date>
-                            </q-popup-proxy>
-                          </q-icon>
-                        </template>
-                      </q-input>
-                    </validate-field> -->
-
                     <div class="col-xs-6 col-md-6 col-lg-6">
                       <q-input
                         readonly
@@ -344,6 +293,7 @@
           >
             Cancel
           </q-btn>
+         
         </div>
       </q-card-actions>
     </q-card>
@@ -450,7 +400,7 @@ const fetchPosition = () => {
 }
 
 const initForm = {
-  name: 'vy ketetetrorp',
+  name: '',
   typeId: '',
   positionId: '',
   address: 'Battambang',
@@ -551,11 +501,19 @@ const insert = () => {
 }
 
 const update = () => {
-  Meteor.call('updateEmployee', form.value, (err, res) => {
+  const doc = { ...form.value }
+
+doc.checkIn = convertTime(form.value.checkIn)
+doc.checkOut = convertTime(form.value.checkOut)
+doc.startDate = moment(form.value.startDate).toDate()
+  Meteor.call('updateEmployee', doc, (err, res) => {
     if (err) {
       Notify.error({ message: err.reason || err })
     } else {
       Notify.success({ message: 'Success' })
+      doc.checkIn = convertTime(form.value.checkIn)
+      doc.checkOut = convertTime(form.value.checkOut)
+      doc.startDate = moment(form.value.startDate).toDate()
       cancel()
     }
   })
@@ -621,10 +579,10 @@ watch(
         form.value.checkIn = moment(res.checkIn, 'HH:mm').format('hh:mm')
         form.value.checkOut = moment(res.checkOut, 'HH:mm').format('hh:mm')
         // form.value.startDate = res.startDate.toDate()
-       
+
         // form.value.startDate = moment(res.startDate,'YYYY-MM-DD').format('MM/DD/YYYY hh:mm')
         // startDate.toDate()
-        // form.value.startDate = moment(res.startDate, 'YYYY/MM/DD').format('MM/DD/YYYY hh:mm')
+        form.value.startDate = moment(res.startDate, 'YYYY/MM/DD').format('YYYY/MM/DD hh:mm')
       })
     }
   }
@@ -639,7 +597,6 @@ watch(
     form.value.checkIn = moment(doc.checkIn, 'HH:mm').format('hh:mm')
     form.value.checkOut = moment(doc.checkOut, 'HH:mm').format('hh:mm')
     // form.value.startDate = moment(doc.startDate, 'HH:mm').format('hh:mm')
-
   }
 )
 </script>

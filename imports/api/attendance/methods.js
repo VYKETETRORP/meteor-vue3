@@ -1,23 +1,20 @@
 import { ValidatedMethod } from 'meteor/mdg:validated-method'
 import SimpleSchema from 'simpl-schema'
 import { Attendances } from './attendance'
-
-export const insertAttendance = new ValidatedMethod({
-  name: 'insertAttendance',
+export const insertAtten = new ValidatedMethod({
+  name: 'insertAtten',
   mixins: [],
   validate:
     // Customer.schema.validator(),
     new SimpleSchema({
-      name: String,
-      telephone: {
-        type: String,
-        optional: true,
-      },
-      address: {
-        type: String,
-        optional: true,
-      },
-      status: String,
+      type: { type: String, optional: true, },
+      tranDate: { type: Date, optional: true, },
+      reason: { type: String, optional: false, },
+      branchId: { type: String, optional: true, },
+      employeeId: { type: String, optional: true, },
+
+
+
     }).validator(),
   run(doc) {
     if (!Meteor.isServer) return false
@@ -37,10 +34,31 @@ Meteor.methods({
     selector = selector || {}
     const limit = rowsPerPage === 0 ? Number.MAX_SAFE_INTEGER : rowsPerPage
     const skip = rowsPerPage * (page - 1)
+    console.log('em', selector)
 
-    const data = Customer.aggregate([
+    const data = Attendances.aggregate([
       {
         $match: selector,
+      },
+
+      {
+        $lookup: {
+          from: "employees",
+          as: "emDoc",
+          localField: "employeeId",
+          foreignField: "_id",
+        },
+      },
+      { $unwind: { path: "$emDoc" } },
+      {
+        $project: {
+          _id: 1,
+          emName: "$emDoc.name",
+          type: 1,
+          reason: 1,
+          tranDate: 1
+
+        }
       },
       {
         $skip: skip,
@@ -49,29 +67,31 @@ Meteor.methods({
         $limit: limit,
       },
     ])
-    const total = Customer.find(selector).count()
+    const total = Attendances.find(selector).count()
+    console.log('em data', data)
     return { data, total }
   },
-  checkExistAt({selector}) {
-    return Customer.findOne(selector)
+  checkExistAtten({ selector }) {
+    return Attendances.findOne(selector)
   },
-  getAttendanceById(id) {
-    return Customer.findOne({ _id: id })
+  fetchAttendance(selector) {
+    return Attendances.find(selector).fetch()
+
   },
-  insertAtt(doc) {
+  getAttendanceId(id) {
+    return Attendances.findOne({ _id: id })
+  },
+  insertAttendance(doc) {
     // validate method
     // Customer.schema.validate(doc)
     new SimpleSchema({
-      name: String,
-      telephone: {
-        type: String,
-        optional: true,
-      },
-      address: {
-        type: String,
-        optional: true,
-      },
-      status: String,
+
+      type: { type: String, optional: true, },
+      tranDate: { type: Date, optional: true, },
+      reason: { type: String, optional: false, },
+      branchId: { type: String, optional: true, },
+      employeeId: { type: String, optional: true, },
+
     }).validate(doc)
 
     if (!Meteor.isServer) return false
@@ -79,36 +99,31 @@ Meteor.methods({
     try {
       console.log('doc', doc)
       // Comsert1.insert(doc)
-      return Customer.insert(doc)
+      return Attendances.insert(doc)
     } catch (error) {
       console.log('error', error)
-      throw new Meteor.Error('Insert customer error', error)
+      throw new Meteor.Error('Insert Employee error', error)
     }
   },
   updateAttendance(doc) {
-    // validate method
-    // Customer.schema.validate(doc)
     new SimpleSchema({
       _id: String,
-      name: String,
-      telephone: {
-        type: String,
-        optional: true,
-      },
-      address: {
-        type: String,
-        optional: true,
-      },
-      status: String,
+      type: { type: String, optional: true, },
+      tranDate: { type: Date, optional: true, },
+      reason: { type: String, optional: false, },
+      branchId: { type: String, optional: true, },
+      employeeId: { type: String, optional: true, },
+
+
     }).validate(doc)
 
     if (!Meteor.isServer) return false
 
     try {
-      return Customer.update({ _id: doc._id }, { $set: doc })
+      return Attendances.update({ _id: doc._id }, { $set: doc })
     } catch (error) {
       console.log('error', error)
-      throw new Meteor.Error('Update customer error', error)
+      throw new Meteor.Error('Update employee error', error)
     }
   },
   removeAttendance({ id }) {
@@ -121,10 +136,10 @@ Meteor.methods({
     if (!Meteor.isServer) return false
 
     try {
-      return Customer.remove({ _id: id })
+      return Attendances.remove({ _id: id })
     } catch (error) {
       console.log('error', error)
-      throw new Meteor.Error('Remove customer error', error)
+      throw new Meteor.Error('Remove Employee error', error)
     }
   },
 })

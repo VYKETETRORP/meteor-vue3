@@ -287,19 +287,6 @@
     }
   );
   
-
-//   watch(()=>
-//   form.value.branchId,(value)=>{
-//     if(!value) return false
-//     const doc =branchs.value.find(it=>it._id==value)
-//     console.log(doc)
-//     form.value.branchId=doc.branchId
-
-//   }
-  
-// )
-
-
   watch(
     () => props.showId,
     (value) => {

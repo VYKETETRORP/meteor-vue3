@@ -6,7 +6,7 @@ import Employee from './pages/Employee.vue'
 import Attendance from './pages/Attendance.vue'
 // Setting
 import AdimSetting from "./pages/AdminSetting.vue";
-
+import Leave from './pages/Leave.vue'
 // Not found
 import NotFound from "./pages/NotFound.vue";
 
@@ -25,6 +25,18 @@ export default [
     },
   },
   {
+    path:"/leave",
+    name:"Leave",
+    component:Leave,
+    meta:{
+      title:"Leave",
+      breadcrumb:{
+        parent:"Dashboard"
+      }
+    }
+
+  },
+  {
     path: "/employee",
     name: "Employee",
     component: Employee,
@@ -40,13 +52,14 @@ export default [
     name:"Attendance",
     component:Attendance,
     meta:{
-      title:"Employee",
+      title:"Attendance",
       breadcrumb:{
         parent:"Dashboard"
       }
     }
 
   },
+
   {
     path: "/login",
     name: "Login",
