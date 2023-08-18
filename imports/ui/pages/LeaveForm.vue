@@ -348,6 +348,7 @@ const options=ref(['Full','Morning','Afternoon','Time'])
 onMounted(() => {
   fetchEmploye()
   fetchBranch()
+  fetchLeave()
 })
 
 const fetchBranch = () => {
@@ -378,6 +379,18 @@ const fetchEmploye = () => {
   })
 }
 
+const leave = ref([])
+const fetchLeave= () => {
+ 
+  Meteor.call('fetchLeave', (err, res) => {
+    if (err) {
+      console.log('fetch leave  error', err)
+    } else {
+      console.log('Success leave  ', res)
+      leave.value = res
+    }
+  })
+}
 const initForm = {
   tranDate: new Date(),
   employeeId: '',
@@ -445,7 +458,6 @@ const submit = async () => {
   const { valid } = await refForm.value.validate()
   if (valid) {
     form.value.branchId = currentBranchId.value
-    form.value.acceptedById=currentUserId.value
     if (form.value._id) {
       update()
     } else {

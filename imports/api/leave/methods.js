@@ -80,7 +80,7 @@ Meteor.methods({
           foreignField: "_id",
         },
       },
-      { $unwind: { path: "$uDoc" } },
+      { $unwind: { path: "$uDoc" , preserveNullAndEmptyArrays: true } },
       {
         $lookup: {
           from: "employees",
@@ -102,6 +102,7 @@ Meteor.methods({
           acceptedById: 1,
           uName: "$uDoc.username",
           emName: "$emDoc.name",
+          // branName:"$emDoc.name"
         },
       },
       {
@@ -118,8 +119,8 @@ Meteor.methods({
   checkExistLeave({ selector }) {
     return Leave.findOne(selector)
   },
-  fetchLeave(selector) {
-    return Leave.find(selector).fetch()
+  fetchLeave() {
+    return Leave.find({}).fetch()
 
   },
   updateStatus(id, status, acceptedById) {

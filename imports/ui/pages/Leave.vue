@@ -135,7 +135,6 @@ const updateStatus=(id,status,acceptedById)=>{
 
 }
 const currentUserId =computed(()=>store.getters['app/currentUserId'])
-
 const currentBranchId = computed(() => store.getters['app/currentBranchId'])
 const columns = [
   {
@@ -145,15 +144,11 @@ const columns = [
     field: 'name',
   },
   { name: 'reason', label: 'Reason', field: 'reason' },
-
   { name: 'type', label: 'Type', field: 'type' },
   { name: 'tranDate', label: 'Tran Date', field: 'tranDate' },
-
   { name: 'fromDate', label: 'From Date', field: 'fromDate' },
   { name: 'toDate', label: 'To Date', field: 'toDate' },
   { name: 'acceptedBy', label: 'accepted by user', field: 'acceptedBy' },
-
-
   { name: 'status', label: 'Status', field: 'status' },
 ]
 const visibleDialog = ref(false)
@@ -174,6 +169,18 @@ const addNew = () => {
   visibleDialog.value = true
 }
 
+const leave=ref([])
+const fetchLeave= () => {
+ 
+ Meteor.call('fetchLeave', (err, res) => {
+   if (err) {
+     console.log('fetch leave  error', err)
+   } else {
+     console.log('Success leave  ', res)
+     leave.value = res
+   }
+ })
+}
 // method
 const fetchData = () => {
   loading.value = true
@@ -210,6 +217,7 @@ const fetchData = () => {
 const onChangePagination = (val) => {
   pagination.value = val.pagination
   fetchData()
+  fetchLeave()
 }
 
 const edit = (row) => {
@@ -229,11 +237,13 @@ const handleClosedDialog = (value) => {
 onMounted(() => {
   fetchData()
   getDataTable()
+  fetchLeave()
 })
 watch(
   () => currentBranchId.value,
   () => {
     fetchData()
+    fetchLeave()
     
   }
 )
@@ -242,19 +252,6 @@ watch(
 
 // })
 
-const acceptedById = ref('')
 
-watch(
-  () => visibleDialog.value==true,
-  (value) => {
-    if (!value) return false
-    const doc = dataTable.value.find((it) => (it._id = value))
-    console.log(doc)
-    acceptedById.value = currentUserId.value
-    console.log('accepted',acceptedById.value)
-    console.log('curerentUserId',currentUserId.value)
-    
-  }
-)
 
 </script>
