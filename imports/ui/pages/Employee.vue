@@ -112,7 +112,7 @@
       align: 'left',
       field: 'name',
     },
-    { name: 'type', label: 'Employee Type', field: 'type' },
+    { name: 'type', label: 'Type', field: 'type' },
     { name: 'position', label: 'Position', field: 'position' },
 
     { name: 'address', label: 'Address', field: 'address' },

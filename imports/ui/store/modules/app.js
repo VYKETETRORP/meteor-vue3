@@ -21,6 +21,12 @@ export default {
     currentBranchId(state) {
       return state.currentBranch ? state.currentBranch._id : null
     },
+    currentUserId(state){
+      return state.currentUser ? state.currentUser._id:null
+    },
+    currentUser(state){
+      return state.currentUser ? state.currentUser.profile.userId:null
+    },
   },
   // Mutations
   mutations: {

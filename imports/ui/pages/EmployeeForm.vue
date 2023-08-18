@@ -207,7 +207,7 @@
                         emit-value
                         map-options
                         clearable
-                        label="Employee Type *"
+                        label="Type *"
                         v-bind="field"
                         :error="!!errorMessage"
                         :error-message="errorMessage"
@@ -403,8 +403,8 @@ const initForm = {
   name: '',
   typeId: '',
   positionId: '',
-  address: 'Battambang',
-  telephone: '06760386',
+  address: '',
+  telephone: '',
   startDate: null,
   checkIn: '7:00',
   checkOut: '8:00',

@@ -48,7 +48,7 @@
     <template #body-cell-date="props">
       <q-td :props="props">
         <span  >
-          {{ props.row.tranDate.toLocaleDateString()}}
+          {{ formatTime(props.row.tranDate)}}
         </span>
       </q-td>
     </template>
@@ -74,6 +74,7 @@ import Notify from '/imports/ui/lib/notify'
 // import EmployeeTypeForm from './EmployeeTypeForm.vue';
 import AttendancesForm from './AttendancesForm.vue'
 import {useStore} from '/imports/store'
+import moment  from 'moment'
 
 const store = useStore()
 const columns = [
@@ -106,7 +107,9 @@ const showId = ref('')
 const addNew = () => {
   visibleDialog.value = true
 }
-
+const formatTime = (date) => {
+  return moment(date).format('lll')
+}
 // method
 const fetchData = () => {
   loading.value = true

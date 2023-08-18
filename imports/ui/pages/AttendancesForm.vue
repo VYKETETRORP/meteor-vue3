@@ -54,61 +54,26 @@
                     </validate-field>
                   </div>
                   <div>
-              <div class="q-pa-md" style="max-width: 300px">
-                <q-input label="Check In" readonly clearable v-model="form.tranDate">
-                  <template v-slot:prepend>
-                    <q-icon name="event" class="cursor-pointer">
-                      <q-popup-proxy
-                        transition-show="scale"
-                        transition-hide="scale"
-                        readonly
-                      >
-                        <q-date  v-model="time" mask="YYYY/MM/DD HH:mm"></q-date>
-                      </q-popup-proxy>
-                    </q-icon>
-                  </template>
-
-                  <template v-slot:append>
-                    <q-icon name="access_time" class="cursor-pointer">
-                      <q-popup-proxy
-                        transition-show="scale"
-                        transition-hide="scale"
-                      >
-                        <q-date
-                          v-model="form.tranDate"
-                          mask="YYYY/MM/DD"
-                          format24h
-                        ></q-date>
-                      </q-popup-proxy>
-                    </q-icon>
-                  </template>
-                </q-input>
-              </div>
+            
             </div>
-<!-- tranDate -->
-                  <!-- <div class="col-12">
-                    <q-input
-                      readonly
-                      filled
-                      label="Tran Date"
-                      v-model="form.tranDate"
-                      mask="date"
+            <div class="col-12">
+                    <validate-field
+                      v-slot="{ value, field, errorMessage }"
+                      v-model="form.reason"
+                      name="reason"
                     >
-                      <template v-slot:append>
-                        <q-icon
-                          name="event"
-                          class="cursor-pointer"
-                        >
-                          <q-popup-proxy
-                            transition-show="scale"
-                            transition-hide="scale"
-                          >
-                            <q-date v-model="form.tranDate"></q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div> -->
+                      <q-input
+                        :model-value="value"
+                        outlined
+                        dense
+                        label="Reason *"
+                        v-bind="field"
+                        :error="!!errorMessage"
+                        :error-message="errorMessage"
+                      ></q-input>
+                    </validate-field>
+                  </div>
+
                 </div>
               </div>
 
@@ -126,7 +91,7 @@
                         :model-value="value"
                         dense
                         v-model="form.type"
-                        :options="emtype"
+                        :options="type"
                         option-label="name"
                         option-value="_id"
                         emit-value
@@ -147,23 +112,7 @@
                       </q-select>
                     </validate-field>
                   </div>
-                  <div class="col-12">
-                    <validate-field
-                      v-slot="{ value, field, errorMessage }"
-                      v-model="form.reason"
-                      name="reason"
-                    >
-                      <q-input
-                        :model-value="value"
-                        outlined
-                        dense
-                        label="Reason *"
-                        v-bind="field"
-                        :error="!!errorMessage"
-                        :error-message="errorMessage"
-                      ></q-input>
-                    </validate-field>
-                  </div>
+               
                 </div>
               </div>
             </div>
@@ -241,7 +190,7 @@ const emit = defineEmits(['closed'])
 
 const branchs = ref([])
 const positions = ref([])
-const emtype = ref(['Check In', 'Check Out'])
+const type = ref(['Check In', 'Check Out'])
 const em = ref([])
 
 const fetchBranch = () => {
@@ -374,7 +323,7 @@ const insert = () => {
 const update = () => {
   const doc = { ...form.value }
 
-  doc.tranDate = moment(form.value.tranDate).toDate().getHours()
+  doc.tranDate = moment(form.value.tranDate).toDate()
   Meteor.call('updateAttendance', doc, (err, res) => {
     if (err) {
       Notify.error({ message: err.reason || err })
