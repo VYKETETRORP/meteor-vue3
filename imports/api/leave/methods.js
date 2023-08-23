@@ -3,6 +3,7 @@ import SimpleSchema from 'simpl-schema'
 // import { Employees } from './employee'
 // import Leave from './leave'
 import { Leave } from './leave'
+import { Notification } from '../notifications/notification'
 export const insertLeave = new ValidatedMethod({
   name: 'insertLeave',
   mixins: [],
@@ -102,6 +103,7 @@ Meteor.methods({
           acceptedById: 1,
           uName: "$uDoc.username",
           emName: "$emDoc.name",
+          employeeId:1,
           // branName:"$emDoc.name"
         },
       },
@@ -121,6 +123,7 @@ Meteor.methods({
   },
   fetchLeave() {
     return Leave.find({}).fetch()
+ 
 
   },
   updateStatus(id, status, acceptedById) {
@@ -131,11 +134,15 @@ Meteor.methods({
   getLeaveId(id) {
     return Leave.findOne({ _id: id })
   },
+
+// insertNotifica(doc){
+//   const IN=  Notification.insert(doc)
+//   return IN
+//   },
+ 
   insertLeave1(doc) {
     // validate method
-    // Customer.schema.validate(doc)
     new SimpleSchema({
-
       tranDate: {
         type: Date,
         optional: false
@@ -172,15 +179,24 @@ Meteor.methods({
       branchId: {
         type: String,
         optional: true
-      }
+      },
+     
     }).validate(doc)
+  
 
+  
+
+   const n= Notification.insert({ title: 'Alert',message:'Someone ask permission for leave',icon:'check',type:"type",createBy:"createBy",refId:"ref",employeeId:id,status:"active",branchId:"branchId",createAt:new Date() });
     if (!Meteor.isServer) return false
 
     try {
       console.log('doc', doc)
-      // Comsert1.insert(doc)
-      return Leave.insert(doc)
+      // const n=Notification.insert(doc)
+      const l =Leave.insert(doc)
+      return n,l
+     
+
+     
     } catch (error) {
       console.log('error', error)
       throw new Meteor.Error('Insert Employee error', error)
@@ -255,4 +271,6 @@ Meteor.methods({
       throw new Meteor.Error('Remove leave error', error)
     }
   },
+
+
 })

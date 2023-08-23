@@ -303,6 +303,7 @@
           >
             Cancel
           </q-btn>
+          <button @click="createNotification()">noti</button>
         </div>
       </q-card-actions>
     </q-card>
@@ -379,6 +380,30 @@ const fetchEmploye = () => {
   })
 }
 
+const NotificationData = ref({
+  title:"title",
+  message:"ask for accept leave",
+  icon:"aaa",
+  type:"Moring",
+  createBy:"createByadmin",
+  refId:"1",
+  status:"active",
+  branchId:"1",
+  employeeId:"em1"
+})
+
+
+
+const Notification = ref([])
+// const  createNotification=()=>{
+//   Meteor.call('createNotification',initForm.value,(err,res)=>{
+//     if(res){
+//       Notification.value=res
+//       console.log('Notification Data')
+
+//     }
+//   })
+// }
 const leave = ref([])
 const fetchLeave= () => {
  
@@ -462,6 +487,7 @@ const submit = async () => {
       update()
     } else {
       insert()
+      // createNotification()
     }
   }
 }
@@ -496,7 +522,21 @@ watch(
     
   }
 )
+// const noti = ref([])
+// const createNotification = () => {
+//   Meteor.call('insertLeave1', NotificationData.value, (error,res) => {
+//     if (error) {
+//       console.error('Error inserting noti', error)
+//     } else {
+//       console.log('noti inserted successfully!')
+//       noti.value=res
 
+
+
+//       cancel()
+//     }
+//   })
+// }
 
 const insert = () => {
   const doc = { ...form.value }
@@ -508,8 +548,9 @@ const insert = () => {
       console.error('Error inserting leave', error)
     } else {
       console.log('Leave inserted successfully!')
-
       cancel()
+    
+     
     }
   })
 }
