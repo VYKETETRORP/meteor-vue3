@@ -189,7 +189,7 @@ Meteor.methods({
     
       const l =Leave.insert(doc)
       console.log('doc', doc)
-      const n= Notification.insert({ toCreateBy:this.userId,title: 'Alert',message:'ask permission for leave',icon:'warning',type:doc.type,createBy:this.userId,refId:l,employeeId:doc.employeeId,status:"active",branchId:doc.branchId,createAt:new Date() });
+      const n= Notification.insert({ toCreateBy:'3EHpeEyBmCypgyNTC',title: 'Alert',message:'ask permission for leave',icon:'warning',type:doc.type,createBy:this.userId,refId:l,employeeId:doc.employeeId,status:"active",branchId:doc.branchId,createAt:new Date() });
       // const n=Notification.insert(doc)
       return n,l
     } catch (error) {

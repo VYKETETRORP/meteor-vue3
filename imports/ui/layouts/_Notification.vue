@@ -35,7 +35,6 @@
           <q-item
             v-close-popup
             clickable
-
             to="/leave"
           >
             <!-- Icon -->
@@ -126,7 +125,8 @@ const emData = ref([])
 const { ready: notiReady } = subscribe(() => [
   'noti',
   {
-    createBy: Meteor.userId(),
+    // createBy: Meteor.userId(),
+    toCreateBy: '3EHpeEyBmCypgyNTC',
     // to:Meteor.userId(),
     status:'active'
   },
@@ -138,7 +138,10 @@ const {result:noti} = autorun(() => {
 
 const  fetchEmName = () =>{
   const selector = {
-    createBy: Meteor.userId(),
+    // createBy: Meteor.userId(),
+    toCreateBy: '3EHpeEyBmCypgyNTC',
+    // toCreateBy: Meteor.userId(),
+
     // to:Meteor.userId()
   }
   Meteor.call('fetchEmployeeName',selector,(err,res)=>{
@@ -150,11 +153,6 @@ const  fetchEmName = () =>{
     }
   })
 }
-
-
-
-
-
 const updateStatusNoti = () => {
   Meteor.call('updateNotificationStatus', 'active', 'readed', (err, res) => {
     if (res) {
@@ -162,8 +160,6 @@ const updateStatusNoti = () => {
     }
   })
 }
-
-
 const isClick=()=>{
   notiNumber.value=0
   updateStatusNoti()
