@@ -4,6 +4,8 @@
     round
     dense
     icon="notifications"
+    @click="isClick"
+
   >
     <q-badge
       color="red"
@@ -27,12 +29,14 @@
         <q-separator />
 
         <template
-          v-for="(notiItem, index) in notifi"
+          v-for="(notiItem, index) in emData"
           :key="index"
         >
           <q-item
             v-close-popup
             clickable
+
+            to="/leave"
           >
             <!-- Icon -->
             <q-item-section
@@ -47,14 +51,16 @@
                 <q-icon :name="notiItem.icon" />
               </q-avatar>
             </q-item-section>
-
             <!-- Message -->
             <q-item-section :key="`message-${index}`">
               <q-item-label
                 caption
                 :lines="2"
                 class="text-grey-9 message-text"
-              >
+
+             >
+              {{ notiItem.emName }}
+     
                 {{ notiItem.message }}
               </q-item-label>
             </q-item-section>
@@ -63,6 +69,7 @@
               :key="`timestamp-${index}`"
               side
               top
+
             >
               {{ notiItem.timestamp }}
             </q-item-section>
@@ -113,38 +120,153 @@ import {
   QBadge,
   QMenu,
 } from 'quasar'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref,watch} from 'vue'
 import { Notification } from '/imports/api/notifications/notification'
-onMounted(()=>{
-  fetchNotification()
+
+// const status=ref('')
+
+const { ready: notiReady } = subscribe(() => [
+  'noti',
+  {
+    // createdBy: Meteor.userId(),
+    to:Meteor.userId(),
+    status:'active'
+  },
+])
+
+const {result:noti} = autorun(() => {
+  if(notiReady.value) return Notification.find({}).fetch()
+
+  return []
 })
-const notifiData=ref([])
-const fetchNotification=()=>{
-  Meteor.call('fetchNotification',(err,res)=>{
-    if(res){
-      console.log('fetch success')
-      notifiData.value=res
 
+
+const  fetchEmName = () =>{
+  const selector = {
+    createdBy: Meteor.userId(),
+    // to:Meteor.userId()
+  }
+
+  Meteor.call('fetchEmployeeName',selector,(err,res)=>{
+    if(!err){
+      console.log('fetch noti success',res)
+      emData.value = res.data || []
+    }else{
+      console.log('fetch notutt error',err)
     }
-
   })
 }
-// find({}, { sort: { createdAt: 1 } }).fetch();
-const notifi = autorun(() => Notification.find({}, { sort: { createAt:-1 },limit:10 }).fetch()).result
-Meteor.subscribe('noti')
 
+onMounted(() => {
+  fetchEmName()
+  // displayEmployeeName()
+  updateStatusNoti()
+  // updateNotificationStatus()
+//  activeLength.value =notiNumber.value
+})
+
+
+const acceptLeave=(id)=>{
+  Meteor.call('getNotificationId',id,(err,res)=>{
+
+ console.log('accepte function run',id)
+  })
+
+ 
+}
+
+const emData = ref([])
+// const fetchEmName = () => {
+//   Meteor.call('fetchEmployeeName', (err, res) => {
+//     if (res) {
+//       emData.value = res.data || []
+//       // notifi.value=res
+//       console.log('fetch success', res)
+//     }
+//   })
+// }
+const employeeName=ref([])
+const displayEmployeeName=(id)=>{
+  const select = emData.value.find((item)=>item.id===id)
+  employeeName.value=select?select.emName:null
+  console.log('emname',employeeName)
+}
+
+// find({}, { sort: { createdAt: 1 } }).fetch();
+// const notifi = autorun(() =>
+// Notification.find({}).fetch()
+  // Notification.find({}, { sort: { createAt: -1 }, limit: 10 }).fetch()
+// ).result
+
+// const activeLengthData = autorun(()=>
+// Notification.find({status:'active'}).fetch
+// ).result
+
+
+// const activeLengthData = autorun(() =>
+//   Notification.find({ status: 'active' }).fetch()
+// ).result
+// Meteor.subscribe('noti')
+// Meteor.subscribe('activeData')
+
+const updateStatusNoti = () => {
+  Meteor.call('updateNotificationStatus', 'active', 'readed', (err, res) => {
+    if (res) {
+      console.log('success', res)
+    }
+  })
+}
+
+
+const isClick=()=>{
+  // activeLength.value=0
+  updateStatusNoti()
+  // displayEmployeeName()
+  
+
+}
 const notifications = ref([
   {
     title: 'Alert',
+    employeeId: 'Name',
     message:
       'Youre receiving this email because of your account on gitlab.com.',
     icon: 'security',
     timestamp: '3h',
     route: { name: 'alert' },
-  },
-])
+  },])
+// const notiNumber = ref(notifi.value.length)
+// const notiNumber=notifi.value
+// const activeLength = ref(notifi.value.length)
 
-const notiNumber = ref(notifi.value.length)
+// console.log('notiNum', notiNumber)
+// let activeLength = ref(0)
+// activeLength=notifi.length
+// const activeLength=notifi.value
+
+// watch(activeLengthData,(items)=>{
+//   //  console.log('items',items)
+  
+//    activeLength.value = items.length
+//   //  fetchEmName()
+   
+// })
+const notiNumber = ref(0)
+// const notiNum = ref(notifi.value.length)
+
+
+
+
+watch(noti,(items)=>{
+  //  console.log('items',items)
+  
+   notiNumber.value = items.length
+   fetchEmName()
+   updateStatusNoti()
+   
+})
+// console.log('active length', activeLength)
+
 </script>
 
 <style lang="scss" scoped>

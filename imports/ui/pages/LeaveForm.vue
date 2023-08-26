@@ -543,7 +543,7 @@ const insert = () => {
   doc.tranDate = moment(form.value.tranDate).toDate()
   doc.fromDate = moment(form.value.fromDate).toDate()
   doc.toDate = moment(form.value.toDate).toDate()
-  Meteor.call('insertLeave1', doc, (error) => {
+  Meteor.call('insertLeave1', doc,  (error) => {
     if (error) {
       console.error('Error inserting leave', error)
     } else {

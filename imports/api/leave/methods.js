@@ -134,13 +134,7 @@ Meteor.methods({
   getLeaveId(id) {
     return Leave.findOne({ _id: id })
   },
-
-// insertNotifica(doc){
-//   const IN=  Notification.insert(doc)
-//   return IN
-//   },
- 
-  insertLeave1(doc) {
+  insertLeave1(doc,employeeId) {
     // validate method
     new SimpleSchema({
       tranDate: {
@@ -182,26 +176,31 @@ Meteor.methods({
       },
      
     }).validate(doc)
-  
-
-  
-
-   const n= Notification.insert({ title: 'Alert',message:'Someone ask permission for leave',icon:'check',type:"type",createBy:"createBy",refId:"ref",employeeId:id,status:"active",branchId:"branchId",createAt:new Date() });
     if (!Meteor.isServer) return false
-
     try {
-      console.log('doc', doc)
-      // const n=Notification.insert(doc)
+      if (Meteor.userId()) {
+        // User is logged in
+        const currentUser = Meteor.user();
+        console.log(`Currently logged-in user: ${currentUser.username}`);
+      } else {
+        // No user is logged in
+        console.log("No user is currently logged in");
+      }
+    
       const l =Leave.insert(doc)
+      console.log('doc', doc)
+      const n= Notification.insert({ toCreateBy:this.userId,title: 'Alert',message:'ask permission for leave',icon:'warning',type:doc.type,createBy:this.userId,refId:l,employeeId:doc.employeeId,status:"active",branchId:doc.branchId,createAt:new Date() });
+      // const n=Notification.insert(doc)
       return n,l
-     
-
-     
     } catch (error) {
       console.log('error', error)
       throw new Meteor.Error('Insert Employee error', error)
     }
   },
+
+
+
+ 
   updateLeave(doc) {
     new SimpleSchema({
       _id: String,

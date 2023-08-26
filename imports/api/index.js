@@ -9,4 +9,6 @@ import './employee/methods'
 import './branches/server'
 import './attendance/methods'
 import './leave/methods'
-import './notifications/methods'
+// import './notifications/methods'
+import './notifications/server'
+

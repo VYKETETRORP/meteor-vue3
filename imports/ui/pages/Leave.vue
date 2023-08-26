@@ -21,6 +21,11 @@
         <span  @click="edit(props.row)" v-if="props.row.status=='active'"  class="ra-text-link">
           {{ props.row.emName }}
         </span>
+        <span  v-else  class="ra-text">
+          {{ props.row.emName }}
+        </span>
+
+
       </q-td>
     </template>
     <template #body-cell-reason="props">
@@ -66,7 +71,7 @@
       </q-td>
     </template>
 
-    <template #body-cell-status="props">
+    <template #body-cell-status="props" v-if="currentUserId==='3EHpeEyBmCypgyNTC'">
       <q-td :props="props">
        
         <q-btn class="q-mr-sm" v-if="props.row.status=='active'"  icon="done" color="primary" @click="updateStatus(props.row._id,'accepted',acceptedById=currentUserId)">Accept</q-btn>
@@ -80,6 +85,23 @@
 
 
     </template>
+
+
+  
+    <template #body-cell-status="props" v-else>
+      <q-td :props="props">
+       
+        <!-- <q-btn class="q-mr-sm" v-if="props.row.status=='active'"  icon="done" color="primary" @click="updateStatus(props.row._id,'accepted',acceptedById=currentUserId)">Accept</q-btn>
+        <q-btn icon="close" color="red" @click="updateStatus(props.row._id,'cancel',acceptedById=currentUserId)" v-if="props.row.status=='active'">Cancel</q-btn>
+        
+        <q-btn :label="props.row.status" v-if="props.row.status!='active'" :icon="props.row.status" flat outline color="secondary" /> -->
+
+        <!-- <q-btn label="Cancel" v-if="props.row.status=='active'" icon="close" flat outline color="secondary" /> -->
+
+      </q-td>
+
+
+    </template>    
   </q-table>
 
   <LeaveForm :dialog="visibleDialog" :show-id="showId" @closed="handleClosedDialog" />
@@ -116,6 +138,8 @@ const getDataTable = () => {
 
     })
 }
+
+
 
 const updateStatus=(id,status,acceptedById)=>{
   console.log('id',id)

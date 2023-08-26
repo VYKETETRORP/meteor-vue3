@@ -16,6 +16,7 @@ Schemas.Notification = new SimpleSchema({
     branchId:String,
     employeeId:String,
     createAt:Date,
+    toCreateBy:String,
  
 });
 Notification.attachSchema(Schemas.Notification);
