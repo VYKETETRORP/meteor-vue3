@@ -69,8 +69,6 @@ Meteor.methods({
       
         }},
       
-
-     
       {
         $skip: skip,
       },

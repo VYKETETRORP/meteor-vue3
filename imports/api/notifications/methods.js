@@ -5,7 +5,7 @@ import { subscribe ,autorun } from "vue-meteor-tracker";
 import { Meteor } from "meteor/meteor";
 
 Meteor.methods({
-  fetchEmployeeName(  {selector} ){
+  fetchEmployeeName( selector ){
     selector = selector || {}
         const data = Notification.aggregate([
           {
@@ -29,21 +29,22 @@ Meteor.methods({
                   icon:1,
                   createAt:1,
                   createBy:1,
+                  // status:'active',
                   status:1,
-                //   employeeId:1,
-                  // _id:'$employeeId'
-                
+                  title:1,
+                  type:1,
+                  toCreateBy:1,
+                  refId:1,
+                  branchId:1,
+                  toCreateBy:1
                 },
               },  
-            //   { $match: { _id: emName } }, 
             { $sort: { createAt: -1 } }, // Sort by descending order of _id
             { $limit: 10 },
           ]);
-          const total = Notification.find({selector}).count();
-          console.log('data',data)
+          const total = Notification.find(selector).count();
           return  {data,total} ;
-        
-    
+          console.log('data',data)
   },
     getNotificationId(id) {
       return Notification.findOne({ _id: id });

@@ -1,7 +1,11 @@
 // import Notifications from "../notifications";
+// import  Notification from "../notifications"
+
+// import { Notification } from "../notifications"
+// import { Notification } from "../notifications"//
 import { Notification } from "../notification"
 
-    Meteor.publish('notifi',(selector)=>{
+    Meteor.publish('noti',(selector)=>{
         selector=selector || {}
         return Notification.find(selector)
     })
