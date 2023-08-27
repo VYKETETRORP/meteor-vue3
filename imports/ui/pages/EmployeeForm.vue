@@ -422,21 +422,13 @@ const visibleDialog = ref(false)
 
 const rules = object({
   telephone: string().required(),
-  // startDate: Date().required(),
   employeeType: string().required(), // checkIn: string().required(),
-  // checkOut: string().required(),
   Position: string().required(),
-
   name: string()
     .min(2)
     .test('exist', 'Name is required', (value) => {
       if (!value) return true
-
       let selector = {
-        // name: {
-        //   // $regex: new RegExp('^' + value.replace(/%/g, '.*') + '$', 'i'),
-        //   $regex: new RegExp(value, 'i'),
-        // },
         name: value,
       }
       if (props.showId) {
@@ -585,6 +577,7 @@ watch(
         form.value.startDate = moment(res.startDate, 'YYYY/MM/DD').format('YYYY/MM/DD hh:mm')
       })
     }
+
   }
 )
 watch(

@@ -36,6 +36,11 @@
             v-close-popup
             clickable
             to="/leave"
+            
+         
+        
+          dense
+        
           >
             <!-- Icon -->
             <q-item-section
@@ -119,8 +124,27 @@ import {
   QBadge,
   QMenu,
 } from 'quasar'
-import { onMounted, ref,watch} from 'vue'
+import { computed, onMounted, ref,watch} from 'vue'
 import { Notification } from '/imports/api/notifications/notification'
+// import { useStore } from 'vuex'
+import { useStore } from '/imports/store'
+const store = useStore()
+const allowedBranches = computed(() => {
+  return store.state.app.allowedBranches
+})
+
+// const currentBranch = computed(() => {
+//   const branch = store.state.app.currentBranch
+//   return branch && `${branch.name}`
+// })
+
+const handleCommand = (branch) => {
+  store.dispatch('app/currentBranchId', branch)
+}
+
+// const currentBranchId =computed(()=>store.getters['app/currentBranchId'])
+const currentBranchId = computed(() => store.getters['app/currentBranchId'])
+
 const emData = ref([])
 const { ready: notiReady } = subscribe(() => [
   'noti',
@@ -140,6 +164,7 @@ const  fetchEmName = () =>{
   const selector = {
     // createBy: Meteor.userId(),
     toCreateBy: '3EHpeEyBmCypgyNTC',
+    branchId:currentBranchId.value
     // toCreateBy: Meteor.userId(),
 
     // to:Meteor.userId()
@@ -153,6 +178,18 @@ const  fetchEmName = () =>{
     }
   })
 }
+
+const branches = ref([])
+const fetchBranch = () => {
+    Meteor.call("fetchBranch", (err, res) => {
+      if (err) {
+        console.log("fetch branch error", err);
+      } else {
+        console.log("Success fetch branch", res);
+        branches.value = res;
+      }
+    });
+  };
 const updateStatusNoti = () => {
   Meteor.call('updateNotificationStatus', 'active', 'readed', (err, res) => {
     if (res) {
@@ -185,6 +222,15 @@ onMounted(() => {
   updateStatusNoti()
 
 })
+
+watch(
+  () => currentBranchId.value,
+  () => {
+    fetchEmName()
+  updateStatusNoti()
+  
+  }
+)
 </script>
 
 <style lang="scss" scoped>
